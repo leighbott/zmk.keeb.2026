@@ -1,0 +1,209 @@
+// Copyright (c) 2022 The ZMK Contributors
+// SPDX-License-Identifier: MIT
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+
+// Home row mods macro
+//#define HRML(k1,k2,k3,k4) &kp k1  &kp k2  &kp k3  &kp k4
+//#define HRMR(k1,k2,k3,k4) &kp k1  &kp k2  &kp k3  &ht RALT k4
+
+#define DEFAULT 0
+#define GAMING 1
+#define LEFT_LYR 2
+#define RIGHT_LYR 3
+#define BOTH 4
+#define GAMING_ALT 5
+
+/ {
+    behaviors {
+        ht: hold_tap {
+            label = "hold_tap";
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <180>;
+            require-prior-idle-ms = <80>;
+            quick-tap-ms = <50>;
+            global-quick-tap;
+            bindings = <&kp>, <&kp>;
+        };
+        st: shift_tap {
+            label = "shift_tap";
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <120>;
+            bindings = <&kp>, <&kp>;
+        };
+    };
+
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+        both_layer {
+            if-layers = <LEFT_LYR RIGHT_LYR>;
+            then-layer = <BOTH>;
+        };
+    };
+
+    combos {
+        compatible = "zmk,combos";
+        combo_esc {
+            timeout-ms = <40>;
+            key-positions = <1 2>;
+            bindings = <&kp ESC>;
+            layers = <DEFAULT>;
+            require-prior-idle-ms = <250>;
+        };
+        combo_del {
+            timeout-ms = <40>;
+            key-positions = <6 7>;
+            bindings = <&kp DEL>;
+            require-prior-idle-ms = <250>;
+        };
+        combo_bksp {
+            timeout-ms = <40>;
+            key-positions = <16 17>;
+            bindings = <&kp BSPC>;
+        };
+        combo_lwin {
+            timeout-ms = <30>;
+            key-positions = <23 24>;
+            bindings = <&kp LGUI>;
+            layers = <0 2 3>;
+            require-prior-idle-ms = <500>;
+        };
+        combo_rwin {
+            timeout-ms = <30>;
+            key-positions = <25 26>;
+            bindings = <&kp LGUI>;
+            require-prior-idle-ms = <500>;
+	};
+        combo_lshift {
+            timeout-ms = <30>;
+            key-positions = <20 21>;
+            bindings = <&kp LSHIFT>;
+            layers = <0 2 3>;
+	};
+        combo_rshift {
+            timeout-ms = <30>;
+            key-positions = <28 29>;
+            bindings = <&kp RSHIFT>;
+	};
+        combo_capsword {
+            timeout-ms = <40>;
+            key-positions = <20 29>;
+            bindings =<&caps_word>; 
+        };
+    };
+    keymap {
+        compatible = "zmk,keymap";
+        default_layer {
+            display-name = "Base";
+            bindings = <
+        //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
+        //│  Q       │  W       │  E       │  R       │  T       │   │  Y       │  U       │  I       │  O       │  P       │
+          &ht LCTRL Q    &kp W      &kp E      &kp R      &kp T          &kp Y      &kp U      &kp I   &kp O    &ht RCTRL P
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│  A       │  S       │  D       │  F       │  G       │   │  H       │  J       │  K       │  L       │ ' "      │
+            &kp A       &kp S       &kp D       &kp F     &kp G          &kp H      &kp J       &kp K     &kp L   &ht LALT SQT
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│  Z       │  X       │  C       │  V       │  B       │   │  N       │  M       │ , <      │ . >      │ / ?      │
+             &kp Z     &kp X      &kp C      &kp V      &kp B          &kp N      &kp M      &kp COMMA  &kp DOT  &ht RSHIFT FSLH
+        //╰──────────┴──────────┴──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┴──────────┴──────────╯
+                                            &lt 2 TAB &kp LSHIFT      &kp SPACE   &lt 3 ENTER
+        //                                 ╰──────────┴──────────╯   ╰──────────┴──────────╯
+            >;
+        };
+
+        gaming_layer {
+            display-name = "Gaming";
+            bindings = <
+        //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
+        //│  F       │  Q       │  W       │  E       │  R       │   │          │          │          │          │          │
+            &kp F       &kp Q      &kp W      &kp E    &kp R         &tog GAMING    &trans      &trans     &trans   &trans
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│  Shift   │  A       │  S       │  D       │  G       │   │          │          │          │          │          │
+            &kp LSHIFT    &kp A      &kp S     &kp D   &kp G          &trans     &trans     &trans     &trans      &trans
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│  CTRL    │  Z        │  X       │  C       │  B      │   │    M   │   ESC    │          │          │
+            &kp LCTRL  &kp Z      &kp X      &kp C      &kp B        &kp M     &kp ESC   &trans     &trans      &kp RALT
+        //╰──────────┴──────────┴──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┴──────────┴──────────╯
+                                              &mo 5   &kp SPACE     &trans      &kp ENTER
+        //                                 ╰──────────┴──────────╯   ╰──────────┴──────────╯
+            >;  
+        };
+
+        left_layer {
+            display-name = "Left";
+            bindings = <
+        //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
+        //│  !       │  @       │  #       │  $       │  %       │   │     ^    │   &      │    *     │   (      │    )     │
+            &kp EXCL   &kp AT     &kp HASH   &kp DLLR    &kp PRCNT       &kp CARET   &kp AMPS  &kp ASTRK  &kp LPAR    &kp RPAR
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│ 1        │  2       │   3      │   4      │     5    │   │  6       │  7       │     8    │    9     │    0      │
+            &kp N1       &kp N2     &kp N3     &kp N4     &kp N5       &kp N6      &kp N7    &kp N8     &kp N9     &kp N0
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│ F1       │   F2     │    F3    │   F4     │   F5     │   │  F6      │   F7     │  F8      │   F9     │   ?     │
+            &kp F1     &kp F2    &kp F3      &kp F4     &kp F5         &kp F6     &kp F7     &kp F8     &kp F9     &kp QMARK
+        //╰──────────┴──────────┴──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┴──────────┴──────────╯
+                                             &trans     &kp ESC        &trans     &trans
+        //                                 ╰──────────┴──────────╯   ╰──────────┴──────────╯
+            >;
+        };
+
+        right_layer {
+            display-name = "Right";
+            bindings = <
+        //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
+        //│     ~    │  <       │  U Arrow │  >       │     +     │   │  ^      │  (       │   )      │  :       │  PG_UP   │
+            &kp TILDE  &kp LT      &kp UP   &kp GT      &kp PLUS       &kp CARET  &kp LPAR   &kp RPAR  &kp COLON  &ht HOME PG_UP
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│     `    │  L Arrow │  D Arrow │  R Arrow │    -     │   │  *       │    [     │    ]     │    ;     │  PG_DN   │
+            &kp GRAVE   &kp LEFT    &kp DOWN   &kp RIGHT &kp MINUS    &kp ASTRK  &kp LBKT   &kp RBKT   &kp SEMI   &ht END PG_DN
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│    |     │    =     │    {     │   }      │     _    │   │   =      │    {     │    }     │    \     │ PSCRN    │
+            &kp PIPE   &kp EQUAL   &kp LBRC  &kp RBRC   &kp UNDER     &kp EQUAL &kp LBRC  &kp RBRC     &kp BSLH   &kp PSCRN
+        //╰──────────┴──────────┴──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┴──────────┴──────────╯
+                                             &trans     &trans         &trans     &trans
+        //                                 ╰──────────┴──────────╯   ╰──────────┴──────────╯
+            >;
+        };
+
+        both_layer {
+            display-name = "Config";
+            bindings = <
+        //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
+        //│ RESET    │          │          │          │PROFILE 0 │   │          │          │          │          │  RESET   │
+           &sys_reset  &trans     &trans  &studio_unlock  &bt BT_SEL 0    &tog GAMING   &trans     &trans     &trans   &sys_reset
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│BOOTLOADER│          │          │          │PROFILE 1 │   │          │          │          │          │BOOTLOADER│
+          &bootloader  &trans     &trans     &trans    &bt BT_SEL 1    &trans     &trans     &trans     &trans    &bootloader
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│          │          │          │ CLEAR BT │PROFILE 2 │   │          │          │          │          │          │
+            &trans     &trans     &trans    &bt BT_CLR &bt BT_SEL 2    &trans     &trans     &trans     &trans     &trans
+        //╰──────────┴──────────┴──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┴──────────┴──────────╯
+                                             &trans     &trans         &trans     &trans
+        //                                 ╰──────────┴──────────╯   ╰──────────┴──────────╯
+            >;
+        };
+        gamingalt_layer {
+            display-name = "Alt Game";
+            bindings = <
+        //╭──────────┬──────────┬──────────┬──────────┬──────────╮   ╭──────────┬──────────┬──────────┬──────────┬──────────╮
+        //│  4       │  1       │          │  2       │  3       │   │     ^    │   &      │    *     │   (      │    )     │
+            &kp N4        &kp N1     &trans   &kp N2    &kp N3      &kp CARET   &kp AMPS  &kp ASTRK  &kp LPAR    &kp RPAR
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│  5       │          │          │          │     T    │   │  6       │  7       │     8    │    9     │    0      │
+            &kp N5       &trans     &trans     &trans     &kp T       &kp N6      &kp N7    &kp N8     &kp N9     &kp N0
+        //├──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┼──────────┼──────────┤
+        //│ F1       │   F2     │    F3    │   F4     │   F5     │   │  F6      │   F7     │  F8      │   F9     │   F10    │
+            &kp F1     &kp F2    &kp F3      &kp F4     &kp F5         &kp F6     &kp F7     &kp F8     &kp F9     &kp F10
+        //╰──────────┴──────────┴──────────┼──────────┼──────────┤   ├──────────┼──────────┼──────────┴──────────┴──────────╯
+                                             &trans     &kp TAB         &trans     &trans
+        //                                 ╰──────────┴──────────╯   ╰──────────┴──────────╯
+            >;
+        };
+    };
+};

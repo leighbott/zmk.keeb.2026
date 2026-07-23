@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#include "sweep.dtsi"
+#include "sweep_esb_addr.dtsi"
+
+&default_transform {
+    col-offset = <17>;
+};
