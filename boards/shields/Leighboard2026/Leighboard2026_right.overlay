@@ -4,4 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "rae_dux.dtsi"
+#include "Leighboard2026.dtsi"
+
+&default_transform {
+	col-offset = <17>;
+};
